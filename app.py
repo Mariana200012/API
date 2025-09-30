@@ -1,7 +1,7 @@
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
-
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from dotenv import load_dotenv 
 
 #Cargar las variables de entorno
@@ -41,7 +41,7 @@ def get_estudiantes():
         })
     return jsonify(lista_estudiantes)
     
-#endpoint para obtener un alumno por el no_control
+#endpoint para obtener un estudiante por el no_control
 @app.route('/estudiantes/<no_control>', methods=['GET'])
 def get_estudiante(no_control):
     estudiante = Estudiante.query.get(no_control)
@@ -54,6 +54,8 @@ def get_estudiante(no_control):
         'ap_materno': estudiante.ap_materno,
         'semestre': estudiante.semestre,
     })
+
+
 
 #endpoint para agregar un nuevo estudiante
 @app.route('/estudiantes', methods=['POST'])
@@ -68,7 +70,6 @@ def insert_estudiante():
     )
     db.session.add(nuevo_estudiante)
     db.session.commit()
-
     return jsonify ({'msg':'Estudiante agregado correctamente'})
 
 #endpoint para eliminar un estudiante
@@ -101,6 +102,7 @@ def updateestudiante(no_control):
 
     db.session.commit()
     return jsonify({'msg': 'Estudiante actualizado correctamente'})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
