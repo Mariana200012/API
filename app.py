@@ -68,7 +68,39 @@ def insert_estudiante():
     )
     db.session.add(nuevo_estudiante)
     db.session.commit()
+
     return jsonify ({'msg':'Estudiante agregado correctamente'})
+
+#endpoint para eliminar un estudiante
+@app.route('/estudiantes/<no_control>', methods=['DELETE'])
+def delete_estudiante(no_control):
+    estudiante = Estudiante.query.get(no_control)
+    if estudiante is None:
+        return jsonify({'msg': 'Estudiante no encontrado'})
+    db.session.delete(estudiante)
+    db.session.commit()
+    return jsonify({'msg': 'Estudiante eliminado correctamente'})
+
+
+#endpoint para actualizar un estudiante
+@app.route('/estudiantes/<no_control>', methods=['PATCH'])
+def updateestudiante(no_control):
+    estudiante = Estudiante.query.get(no_control)
+    if estudiante is None:
+        return jsonify({'msg': 'Estudiante no encontrado'})
+    data = request.get_json()
+
+    if "nombre" in data:
+        estudiante.nombre = data['nombre']
+    if "ap_paterno" in data:
+        estudiante.ap_paterno = data['ap_paterno']
+    if "ap_materno" in data:
+        estudiante.ap_materno = data['ap_materno']
+    if "semestre" in data:
+        estudiante.semestre = data['semestre']
+
+    db.session.commit()
+    return jsonify({'msg': 'Estudiante actualizado correctamente'})
 
 if __name__ == '__main__':
     app.run(debug=True)
